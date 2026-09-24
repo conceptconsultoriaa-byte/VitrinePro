@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitrine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body{ padding-bottom:90px; }
+  .vitrine-header{ padding:20px 16px; text-align:center; }
+  .vitrine-header img{ max-height:48px; margin-bottom:8px; }
+  .produtos-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:14px; padding:0 16px; }
+  .produto-card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .produto-card img{ width:100%; height:150px; object-fit:cover; background:var(--surface-2); }
+  .produto-card .info{ padding:10px 12px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .produto-card .nome{ font-weight:700; font-size:0.9rem; }
+  .produto-card .preco{ font-family:'Anton',sans-serif; font-size:1.1rem; }
+  .produto-card .add-row{ display:flex; gap:6px; align-items:center; margin-top:auto; }
+  .produto-card input[type=number]{ width:52px; padding:8px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--ink); }
+  .produto-card button{ flex:1; }
+  .cart-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--dark-bg); color:var(--ink-invert); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .cart-bar b{ font-family:'Anton',sans-serif; }
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:flex-end; justify-content:center; z-index:10; }
+  .modal-overlay.hidden{ display:none; }
+  .modal-card{ background:var(--surface); color:var(--ink); border-radius:18px 18px 0 0; padding:24px; width:100%; max-width:480px; max-height:80vh; overflow-y:auto; }
+  .cart-item{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:0.9rem; }
+</style>
+</head>
+<body>
+  <div class="vitrine-header" id="vitrineHeader">
+    <p class="hint">Carregando vitrine...</p>
+  </div>
+  <div class="produtos-grid" id="produtosGrid"></div>
+
+  <div class="cart-bar hidden" id="cartBar">
+    <span id="cartResumo">0 itens · R$ 0,00</span>
+    <button class="btn-primary" id="btnVerCarrinho">Finalizar pedido</button>
+  </div>
+
+  <div class="modal-overlay hidden" id="cartModal">
+    <div class="modal-card">
+      <h2>Seu pedido</h2>
+      <div id="cartItens"></div>
+      <p style="text-align:right;font-weight:800;margin-top:10px;">Total: <span id="cartTotal">R$ 0,00</span></p>
+      <form id="checkoutForm" class="auth-form">
+        <label>Seu nome <input type="text" id="ckNome" required></label>
+        <label>Seu WhatsApp <input type="tel" id="ckTelefone" required placeholder="55 11 99999-9999"></label>
+        <label>Endereço de entrega (se precisar) <input type="text" id="ckEndereco" placeholder="Opcional"></label>
+        <label>Data desejada de entrega <input type="date" id="ckData"></label>
+        <button type="submit" class="btn-primary">Enviar pedido</button>
+        <button type="button" class="btn-secondary" id="btnFecharCarrinho">Voltar</button>
+      </form>
+      <p id="checkoutMsg" class="hint"></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="lib/supabaseClient.js"></script>
+  <script src="vitrine.js"></script>
+</body>
+</html>

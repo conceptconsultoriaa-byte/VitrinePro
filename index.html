@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitrinePro — Painel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <img id="brandLogo" src="" alt="" class="brand-logo hidden">
+      <span id="brandName" class="brand-name">VitrinePro</span>
+    </div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="dashboard">Painel</button>
+      <button class="tab-btn" data-tab="produtos">Produtos</button>
+      <button class="tab-btn" data-tab="pedidos">Pedidos <span id="badgePedidos" class="tab-badge hidden">0</span></button>
+      <button class="tab-btn" data-tab="config">Configurações</button>
+      <button class="tab-btn" id="logoutBtn">Sair</button>
+    </nav>
+  </header>
+
+  <main class="content">
+
+    <section id="tab-dashboard" class="tab-panel active">
+      <div id="sponsorBanner"></div>
+      <h1>Visão geral</h1>
+      <div class="cards">
+        <div class="card"><span class="card-label">Pedidos pendentes</span><span class="card-value" id="statPedidosPendentes">0</span></div>
+        <div class="card"><span class="card-label">A receber</span><span class="card-value" id="statAReceber">R$ 0,00</span></div>
+        <div class="card"><span class="card-label">Recebido</span><span class="card-value" id="statRecebido">R$ 0,00</span></div>
+        <div class="card"><span class="card-label">Produtos ativos</span><span class="card-value" id="statProdutos">0</span></div>
+      </div>
+      <h2>Últimos pedidos</h2>
+      <div id="proximosPedidos" class="appointment-list"></div>
+    </section>
+
+    <section id="tab-produtos" class="tab-panel">
+      <h1>Produtos da vitrine</h1>
+      <form id="produtoForm" class="form-grid">
+        <label>Nome do produto <input type="text" id="prodNome" required></label>
+        <label>Preço (R$) <input type="number" id="prodPreco" min="0" step="0.01" required></label>
+        <label>Foto <input type="file" id="prodFoto" accept="image/*"></label>
+        <button type="submit" class="btn-primary">Cadastrar produto</button>
+      </form>
+      <div id="produtosList" class="list"></div>
+    </section>
+
+    <section id="tab-pedidos" class="tab-panel">
+      <h1>Pedidos recebidos</h1>
+      <p class="hint">Clique em "🔗 Cobrar" para gerar o link de pagamento e enviar pelo WhatsApp.</p>
+      <div id="pedidosList" class="appointment-list"></div>
+    </section>
+
+    <section id="tab-config" class="tab-panel">
+      <h1>Configurações do negócio (marca / segmento)</h1>
+      <form id="configForm" class="form-grid">
+        <label>Nome do negócio <input type="text" id="cfgNome" required></label>
+        <label>Segmento
+          <select id="cfgSegmento">
+            <option value="semijoia">Semijoias / Acessórios</option>
+            <option value="roupa">Roupas / Moda</option>
+            <option value="cosmetico">Cosméticos / Perfumaria</option>
+            <option value="hortifruti">Hortifruti / Mercado</option>
+            <option value="outro">Outro segmento</option>
+          </select>
+        </label>
+        <label>Cor de destaque do app <input type="color" id="cfgCor" value="#C6E619" style="height:44px;padding:4px;">
+        </label>
+        <label>Logotipo <input type="file" id="cfgLogo" accept="image/*"><span class="hint" id="cfgLogoHint"></span></label>
+        <label>WhatsApp do negócio (recebe alerta de novo pedido) <input type="tel" id="cfgWhats" placeholder="55 11 99999-9999"></label>
+        <label>Link do seu negócio (slug) <input type="text" id="cfgSlug" required pattern="[a-z0-9-]+" title="letras minúsculas, números e hífen"></label>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </form>
+
+      <h2>Link público da vitrine</h2>
+      <p class="hint">Envie este link para seus clientes verem os produtos e fazerem pedido sozinhos (funciona sem login):</p>
+      <div class="list-item">
+        <code id="publicLinkText">—</code>
+        <button class="btn-secondary" id="copyLinkBtn">Copiar link</button>
+      </div>
+
+      <h2>Recebimento dos seus clientes</h2>
+      <p class="hint">Conecte sua própria conta do Mercado Pago para receber diretamente o pagamento dos seus clientes (o VitrinePro não fica com esse dinheiro — só com a mensalidade da assinatura).</p>
+      <div class="list-item">
+        <span id="mpStatusText">Verificando...</span>
+        <a class="btn-primary" id="mpConectarBtn" href="#" target="_blank" rel="noopener">Conectar Mercado Pago</a>
+      </div>
+
+      <h2>Assinatura do VitrinePro</h2>
+      <div class="list-item">
+        <span>Status atual: <span class="status-badge" id="subStatusBadge">—</span></span>
+      </div>
+      <div class="cards" style="margin-top:12px;">
+        <div class="card">
+          <span class="card-label">Básico — R$ 49/mês</span>
+          <span class="hint">Até 15 produtos na vitrine.</span>
+          <button class="btn-primary" id="btnAssinarBasico" style="margin-top:10px;">Assinar Básico</button>
+        </div>
+        <div class="card">
+          <span class="card-label">Pro — R$ 89/mês</span>
+          <span class="hint">Até 50 produtos, relatório completo, marca personalizada.</span>
+          <button class="btn-primary" id="btnAssinarPro" style="margin-top:10px;">Assinar Pro</button>
+        </div>
+      </div>
+      <p class="hint">Depois de pagar, pode levar alguns segundos para o status atualizar aqui.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="lib/supabaseClient.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

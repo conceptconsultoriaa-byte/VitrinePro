@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitrinePro — Assine agora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">VitrinePro</span>
+    </div>
+  </header>
+
+  <main class="content" style="max-width:760px;">
+
+    <div id="viewPlanos">
+      <h1 style="font-size:1.9rem;">Sua agenda organizada, com lembrete automático e cobrança fácil — pronta em 2 minutos.</h1>
+      <p class="hint" style="font-size:0.95rem;">Calendário geral e individual pra cada profissional, link de agendamento pro seu cliente, lembrete de WhatsApp e relatório de contas a receber — tudo num app só, com a sua marca.</p>
+
+      <div class="cards" style="margin-top:24px;">
+        <div class="card">
+          <span class="card-label">Básico — R$ 49/mês</span>
+          <span class="hint">Até 2 profissionais, calendário geral + individual, link de agendamento próprio, lembrete de WhatsApp.</span>
+          <button class="btn-primary" style="margin-top:12px;" onclick="abrirCadastro('basico')">Assinar Básico</button>
+        </div>
+        <div class="card">
+          <span class="card-label">Pro — R$ 89/mês</span>
+          <span class="hint">Até 10 profissionais, relatório completo de contas a receber, marca personalizada (logotipo e cor).</span>
+          <button class="btn-primary" style="margin-top:12px;" onclick="abrirCadastro('pro')">Assinar Pro</button>
+        </div>
+      </div>
+
+      <p class="hint" style="margin-top:20px;">Já é assinante? <a href="login.html" style="color:var(--lime);font-weight:700;">Entrar na minha conta</a></p>
+      <p class="hint">Ao assinar, você concorda com os <a href="termos.html" style="color:var(--lime);font-weight:700;">Termos de Uso e Privacidade</a>.</p>
+    </div>
+
+    <div id="viewCadastro" class="hidden">
+      <h1 style="font-size:1.6rem;">Falta só criar seu acesso</h1>
+      <p class="hint" id="planoEscolhidoTexto"></p>
+      <form id="cadastroForm" class="form-grid" style="margin-top:16px;">
+        <label>Nome do seu negócio <input type="text" id="novoNegocioNome" required placeholder="Ex: Salão da Ana"></label>
+        <label>Seu e-mail <input type="email" id="novoEmail" required></label>
+        <label>Crie uma senha (mín. 6 caracteres) <input type="password" id="novaSenha" required minlength="6"></label>
+        <button type="submit" class="btn-primary" id="btnConfirmarAssinatura">Confirmar e ir para o pagamento</button>
+      </form>
+      <p class="hint" id="cadastroMsg"></p>
+      <p class="hint"><button class="btn-secondary" onclick="voltarPlanos()">← Voltar</button></p>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="lib/supabaseClient.js"></script>
+<script src="assinar.js"></script>
+</body>
+</html>
