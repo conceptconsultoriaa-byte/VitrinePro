@@ -267,12 +267,15 @@ function comprimirImagem(file, maxLargura = 1000, qualidade = 0.8){
 }
 
 /* ---------------- PRODUTOS ---------------- */
+let editingProdutoId = null;
 document.getElementById("produtoForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  const limite = planoAtual().produtos;
-  if(PRODUTOS.length >= limite){
-    alert(`Seu plano atual permite até ${limite} produtos na vitrine. Para cadastrar mais, faça upgrade em Configurações → Assinatura.`);
-    return;
+  if(!editingProdutoId){
+    const limite = planoAtual().produtos;
+    if(PRODUTOS.length >= limite){
+      alert(`Seu plano atual permite até ${limite} produtos na vitrine. Para cadastrar mais, faça upgrade em Configurações → Assinatura.`);
+      return;
+    }
   }
   const nome = document.getElementById("prodNome").value.trim();
   const preco = parseFloat(document.getElementById("prodPreco").value.replace(",","."));
@@ -289,11 +292,41 @@ document.getElementById("produtoForm").addEventListener("submit", async e=>{
     foto_url = pub.publicUrl;
   }
 
-  const { error } = await supabaseClient.from("produtos").insert({ business_id: BUSINESS.id, nome, preco, foto_url, ativo: true });
-  if(error){ alert("Erro ao cadastrar produto: " + error.message); return; }
-  e.target.reset();
+  let error;
+  if(editingProdutoId){
+    const payload = { nome, preco };
+    if(foto_url) payload.foto_url = foto_url;
+    ({ error } = await supabaseClient.from("produtos").update(payload).eq("id", editingProdutoId));
+  } else {
+    ({ error } = await supabaseClient.from("produtos").insert({ business_id: BUSINESS.id, nome, preco, foto_url, ativo: true }));
+  }
+  if(error){ alert("Erro ao salvar produto: " + error.message); return; }
+  cancelarEdicaoProduto();
   await loadAll(); refreshAll();
 });
+function editarProduto(p){
+  editingProdutoId = p.id;
+  document.getElementById("prodNome").value = p.nome || "";
+  document.getElementById("prodPreco").value = p.preco || "";
+  document.getElementById("prodFoto").value = "";
+  document.getElementById("produtoFormFotoHint").style.display = "block";
+  const titulo = document.getElementById("produtoFormTitle");
+  titulo.textContent = "Editando: " + p.nome;
+  titulo.style.display = "block";
+  document.getElementById("produtoFormSubmitBtn").textContent = "Salvar alterações";
+  document.getElementById("produtoFormCancelBtn").style.display = "inline-block";
+  document.getElementById("produtoForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("prodNome").focus();
+}
+function cancelarEdicaoProduto(){
+  editingProdutoId = null;
+  document.getElementById("produtoForm").reset();
+  document.getElementById("produtoFormFotoHint").style.display = "none";
+  document.getElementById("produtoFormTitle").style.display = "none";
+  document.getElementById("produtoFormSubmitBtn").textContent = "Cadastrar produto";
+  document.getElementById("produtoFormCancelBtn").style.display = "none";
+}
+document.getElementById("produtoFormCancelBtn").addEventListener("click", cancelarEdicaoProduto);
 
 function renderProdutosList(){
   const el = document.getElementById("produtosList");
@@ -308,6 +341,10 @@ function renderProdutosList(){
       <strong>${p.nome}</strong> — ${brl(p.preco)} ${p.ativo ? `<span class="status-badge status-pago">Ativo</span>` : `<span class="status-badge status-cancelado">Inativo</span>`}</span>
       <span class="row-actions"></span>`;
     const actions = div.querySelector(".row-actions");
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn-secondary"; editBtn.textContent = "Editar";
+    editBtn.addEventListener("click", ()=> editarProduto(p));
+    actions.appendChild(editBtn);
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "btn-secondary"; toggleBtn.textContent = p.ativo ? "Desativar" : "Ativar";
     toggleBtn.addEventListener("click", async ()=>{ await supabaseClient.from("produtos").update({ ativo: !p.ativo }).eq("id", p.id); await loadAll(); refreshAll(); });
